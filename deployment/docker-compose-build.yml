@@ -1,0 +1,65 @@
+version: '3.7'
+
+# services
+services:
+
+
+  reverseproxy:
+    restart: always
+    build:
+      context: ../reverse-proxy/
+      dockerfile: Dockerfile
+    container_name: "reverse-proxy"
+    ports:
+      - 8080:8080
+    depends_on:
+      - user-api
+      - dictionary-api
+
+
+  frontend:
+    restart: 'always'
+    build:
+      context: ../frontend-ang/
+      dockerfile: Dockerfile
+    container_name: "frontend"
+    ports:
+      - "8100:80"
+
+  user-api:
+    restart: 'always'
+    build:
+      context: ../user-api/
+      dockerfile: Dockerfile
+    environment:
+      AWS_SECRET_KEY : ${AWS_SECRET_KEY}
+      AWS_ACCESS_KEY : ${AWS_ACCESS_KEY}
+    container_name: "user-api"
+
+  dictionary-api:
+    restart: 'always'
+    build:
+      context: ../dictionary-api/
+      dockerfile: Dockerfile
+    environment:
+      AWS_SECRET_KEY : ${AWS_SECRET_KEY}
+      AWS_ACCESS_KEY : ${AWS_ACCESS_KEY}
+    container_name: "dictionary-api"
+
+  # app-client:
+  #   build:
+  #     context: ./data-labelling-frontend/
+  #     dockerfile: Dockerfile
+  #     args:
+  #       REACT_APP_API_BASE_URL: http://localhost:8080/
+  #   container_name: "app-client"
+  #   ports:
+  #     - "9090:80"
+  #   depends_on:
+  #     - app-server
+  #   networks:
+  #     - frontend
+
+# volumes
+# volumes:
+#   my_dbdata:

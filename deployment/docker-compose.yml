@@ -1,0 +1,34 @@
+version: '3.7'
+
+# services
+services:
+  reverseproxy:
+    restart: always
+    image : fatihyurdagul/wordpractice-reverse-proxy
+    container_name: "reverse-proxy"
+    ports:
+      - 8080:8080
+    depends_on:
+      - user-api
+      - dictionary-api
+
+  frontend:
+    restart: 'always'
+    container_name: "frontend"
+    image: fatihyurdagul/wordpractice-frontend
+
+  user-api:
+    restart: 'always'
+    container_name: "user-api"
+    image: fatihyurdagul/wordpractice-user-api
+    environment:
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+
+  dictionary-api:
+    restart: 'always'
+    container_name: "dictionary-api"
+    image: fatihyurdagul/wordpractice-dictionary-api
+    environment:
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
